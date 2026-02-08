@@ -4,84 +4,84 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-8">
-        <div id="map" style="height: 600px;"></div>
+    <div class="col-md-12 mb-3">
+        <h2>Карта локальных топонимов Башкортостана</h2>
+        <p class="lead">{{ total_in_db }} объектов: урочища, горы, родники, скалы и другие природные объекты</p>
     </div>
+
+    <div class="col-md-8">
+        <!-- Google My Maps -->
+        <div class="ratio ratio-16x9">
+            <iframe src="https://www.google.com/maps/d/embed?mid=1ViycTG_wRfUk-gLGv__z0wn97IYbLvQ&ehbc=2E312F"
+                width="100%" height="500" style="border:0;" allowfullscreen loading="lazy">
+            </iframe>
+        </div>
+        <div class="mt-2">
+            <a href="https://www.google.com/maps/d/viewer?mid=1ViycTG_wRfUk-gLGv__z0wn97IYbLvQ" target="_blank"
+                class="btn btn-sm btn-outline-secondary">
+                Открыть карту в полном размере
+            </a>
+        </div>
+
+        <!-- Список топонимов под картой -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Каталог топонимов</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for toponym in toponyms|slice:":12" %}
+                    <div class="col-md-6 mb-2">
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                            <div>
+                                <a href="{% url 'toponyms:detail' toponym.pk %}" class="text-decoration-none">
+                                    <strong>{{ toponym.name_rus }}</strong>
+                                </a>
+                                {% if toponym.name_bash %}
+                                <br><small class="text-muted">{{ toponym.name_bash }}</small>
+                                {% endif %}
+                            </div>
+                            <span class="badge bg-secondary">{{ toponym.get_type_display }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if total_in_db > 12 %}
+                <div class="text-center mt-3">
+                    <a href="#" class="btn btn-outline-primary">Показать все {{ total_in_db }} объектов</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-4">
-        <h3>Топонимы Башкортостана</h3>
-        <div id="toponyms-list">
-            {% for toponym in toponyms %}
-            <div class="card mb-2">
-                <div class="card-body">
-                    <h5>{{ toponym.name_rus }}</h5>
-                    <p class="text-muted">{{ toponym.name_bash }}</p>
-                    <p><small>{{ toponym.get_type_display }}</small></p>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Статистика</h5>
+            </div>
+            <div class="card-body">
+                <p>Всего объектов: <strong>{{ total_in_db }}</strong></p>
+                <p>В каталоге: <strong>3867</strong> топонимов</p>
+                <p>Источник: <em>Реестр АГКГН</em></p>
+                <div class="mt-3">
+                    {% if toponyms.first %}
+                    <a href="{% url 'toponyms:detail' toponyms.first.pk %}" class="btn btn-sm btn-outline-primary">
+                        Пример: посмотреть детальную страницу
+                    </a>
+                    {% endif %}
                 </div>
             </div>
-            {% empty %}
-            <p>Пока нет опубликованных топонимов</p>
-            {% endfor %}
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5>Добавить топоним</h5>
+                <p>Знаете местное название, которого нет на карте?</p>
+                <a href="#" class="btn btn-success">Предложить топоним</a>
+                <p class="text-muted mt-2"><small>После модерации объект появится на карте</small></p>
+            </div>
         </div>
     </div>
 </div>
-
-{{ toponyms_json|json_script:"toponyms-data" }}
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-    ymaps.ready(initMap);
-    
-    function initMap() {
-        // Получаем данные из JSON
-        const toponymsData = JSON.parse(document.getElementById('toponyms-data').textContent);
-        
-        const map = new ymaps.Map('map', {
-            center: [54.7281, 56.0065],
-            zoom: 8,
-            controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
-        });
-        
-        // Преобразуем данные и добавляем метки
-        toponymsData.forEach(function(item) {
-            const fields = item.fields;
-            const placemark = new ymaps.Placemark(
-                [fields.latitude, fields.longitude],
-                {
-                    balloonContent: `
-                        <h5>${fields.name_rus}</h5>
-                        <p><em>${fields.name_bash}</em></p>
-                        <p>${getTypeDisplay(fields.type)}</p>
-                        ${fields.description ? `<p>${fields.description.substring(0, 100)}</p>` : ''}
-                    `
-                },
-                {
-                    preset: 'islands#blueIcon'
-                }
-            );
-            map.geoObjects.add(placemark);
-        });
-        
-        // Если есть метки - подгоняем границы
-        if (toponymsData.length > 0) {
-            map.setBounds(map.geoObjects.getBounds(), { checkZoomRange: true });
-        }
-    }
-    
-    function getTypeDisplay(type) {
-        const types = {
-            'spring': 'Родник',
-            'rock': 'Скала/Утёс',
-            'mountain': 'Гора',
-            'river': 'Река',
-            'lake': 'Озеро',
-            'forest': 'Лес/Роща',
-            'field': 'Поле/Луг',
-            'ravine': 'Овраг/Лог',
-            'tract': 'Урочище',
-            'other': 'Другое'
-        };
-        return types[type] || type;
-    }
-</script>
 {% endblock %}

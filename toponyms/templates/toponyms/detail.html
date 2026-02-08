@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ toponym.name_rus }} | Йәнтөйәк{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'toponyms:map' %}">Карта</a></li>
+            <li class="breadcrumb-item active">{{ toponym.name_rus }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <!-- Основная информация -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="h3 mb-0">{{ toponym.name_rus }}</h1>
+                    {% if toponym.name_bash %}
+                    <p class="text-muted mb-0">{{ toponym.name_bash }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Тип объекта:</strong> {{ toponym.get_type_display }}</p>
+                            <p><strong>Координаты:</strong> {{ toponym.latitude|floatformat:6 }}, {{ toponym.longitude|floatformat:6 }}</p>
+                            {% if toponym.reg_number %}
+                            <p><strong>Регистр. номер:</strong> {{ toponym.reg_number }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Здесь позже добавим превью фото -->
+                        </div>
+                    </div>
+                    
+                    {% if toponym.description %}
+                    <div class="mb-3">
+                        <h5>Описание</h5>
+                        <p>{{ toponym.description }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Ссылки -->
+                    <div class="mt-4">
+                        {% if toponym.google_maps_url %}
+                        <a href="{{ toponym.google_maps_url }}" target="_blank" class="btn btn-primary">
+                            <i class="bi bi-map"></i> Показать на Google Maps
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'toponyms:map' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Назад к карте
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Блок для фото/аудио/комментариев (позже) -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5>Фотографии и истории</h5>
+                    <p class="text-muted">Здесь будут фото, аудиозаписи и истории от пользователей.</p>
+                    <button class="btn btn-success" disabled>Добавить фото</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Боковая панель -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Быстрый доступ</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-outline-primary">Предложить правку</a>
+                        <a href="#" class="btn btn-outline-secondary">Обсудить на форуме</a>
+                        <button class="btn btn-outline-success" disabled>Добавить аудиозапись</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Статистика -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6>Информация об объекте</h6>
+                    <ul class="list-unstyled">
+                        <li>Добавлен: {{ toponym.created_at|date:"d.m.Y" }}</li>
+                        <li>Статус: {{ toponym.get_status_display }}</li>
+                        {% if toponym.created_by %}
+                        <li>Добавил: {{ toponym.created_by.username }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

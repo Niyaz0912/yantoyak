@@ -61,6 +61,12 @@ class Toponym(models.Model):
     votes_against = models.IntegerField(default=0, verbose_name='Голосов против')
     disputed_alternatives = models.JSONField(default=list, blank=True, verbose_name='Альтернативные варианты названия')
     
+    # детальная страница топонима
+    google_maps_url = models.URLField(
+        blank=True, 
+        verbose_name='Ссылка на Google Maps',
+        help_text='Ссылка на объект в Google My Maps'
+    )
     class Meta:
         verbose_name = 'Топоним'
         verbose_name_plural = 'Топонимы'
