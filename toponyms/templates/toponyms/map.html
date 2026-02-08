@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Карта топонимов Башкортостана | Йәнтөйәк{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div id="map" style="height: 600px;"></div>
+    </div>
+    <div class="col-md-4">
+        <h3>Топонимы Башкортостана</h3>
+        <div id="toponyms-list">
+            {% for toponym in toponyms %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5>{{ toponym.name_rus }}</h5>
+                    <p class="text-muted">{{ toponym.name_bash }}</p>
+                    <p><small>{{ toponym.get_type_display }}</small></p>
+                </div>
+            </div>
+            {% empty %}
+            <p>Пока нет опубликованных топонимов</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{{ toponyms_json|json_script:"toponyms-data" }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    ymaps.ready(initMap);
+    
+    function initMap() {
+        // Получаем данные из JSON
+        const toponymsData = JSON.parse(document.getElementById('toponyms-data').textContent);
+        
+        const map = new ymaps.Map('map', {
+            center: [54.7281, 56.0065],
+            zoom: 8,
+            controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+        });
+        
+        // Преобразуем данные и добавляем метки
+        toponymsData.forEach(function(item) {
+            const fields = item.fields;
+            const placemark = new ymaps.Placemark(
+                [fields.latitude, fields.longitude],
+                {
+                    balloonContent: `
+                        <h5>${fields.name_rus}</h5>
+                        <p><em>${fields.name_bash}</em></p>
+                        <p>${getTypeDisplay(fields.type)}</p>
+                        ${fields.description ? `<p>${fields.description.substring(0, 100)}</p>` : ''}
+                    `
+                },
+                {
+                    preset: 'islands#blueIcon'
+                }
+            );
+            map.geoObjects.add(placemark);
+        });
+        
+        // Если есть метки - подгоняем границы
+        if (toponymsData.length > 0) {
+            map.setBounds(map.geoObjects.getBounds(), { checkZoomRange: true });
+        }
+    }
+    
+    function getTypeDisplay(type) {
+        const types = {
+            'spring': 'Родник',
+            'rock': 'Скала/Утёс',
+            'mountain': 'Гора',
+            'river': 'Река',
+            'lake': 'Озеро',
+            'forest': 'Лес/Роща',
+            'field': 'Поле/Луг',
+            'ravine': 'Овраг/Лог',
+            'tract': 'Урочище',
+            'other': 'Другое'
+        };
+        return types[type] || type;
+    }
+</script>
+{% endblock %}
