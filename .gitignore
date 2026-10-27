@@ -28,12 +28,6 @@ staticfiles/
 .DS_Store
 Thumbs.db
 
-# Добавь в конец .gitignore:
-*.pdf
-*.csv
-*.json
-*.xlsx
-*.txt
+# Отладочные и временные файлы (конкретные, не по маске)
 pdf_debug.txt
-__pycache__/
-*.pyc
+*.pdf
