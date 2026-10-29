@@ -56,6 +56,40 @@
     </div>
 
     <div class="col-md-4">
+        <!-- Мои карты -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Мои карты</h5>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    {% if user_maps %}
+                        <ul class="list-group mb-2">
+                            {% for m in user_maps %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="{% url 'maps:detail' m.pk %}"><strong>{{ m.title }}</strong></a>
+                                    {% if m.description %}
+                                    <br><small class="text-muted">{{ m.description }}</small>
+                                    {% endif %}
+                                </div>
+                                <span class="badge bg-secondary">{{ m.toponyms.count }} точек</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">У вас пока нет карт.</p>
+                    {% endif %}
+
+                    <a href="{% url 'maps:create' %}" class="btn btn-success btn-sm">+ Создать свою карту</a>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <a href="{% url 'login' %}">Войдите</a>, чтобы увидеть свои карты.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
         <div class="card mb-3">
             <div class="card-header">
                 <h5 class="mb-0">Статистика</h5>

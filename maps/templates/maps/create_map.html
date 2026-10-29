@@ -1,0 +1,34 @@
+<!-- maps/templates/maps/create_map.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Создать свою карту</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="{{ form.title.id_for_label }}" class="form-label">Название</label>
+      {{ form.title }}
+      {% if form.title.errors %}
+        <div class="text-danger">{{ form.title.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.description.id_for_label }}" class="form-label">Описание</label>
+      {{ form.description }}
+    </div>
+
+    <div class="mb-3 form-check">
+      {{ form.is_public }}
+      <label for="{{ form.is_public.id_for_label }}" class="form-check-label">Публичная карта</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+    <a href="/" class="btn btn-secondary">Отмена</a>
+  </form>
+</div>
+{% endblock %}

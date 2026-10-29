@@ -1,3 +1,6 @@
+# core/settings.py
+import mimetypes
+mimetypes.add_type("application/javascript", ".js", True)
 import os
 from dotenv import load_dotenv
 
@@ -32,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Установленные:
     'toponyms.apps.ToponymsConfig',
+    'maps.apps.MapsConfig', 
 ]
 
 MIDDLEWARE = [
@@ -42,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.JavaScriptCharsetMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'

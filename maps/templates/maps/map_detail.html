@@ -1,0 +1,40 @@
+<!-- maps/templates/maps/map_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ map.title }} | Йәнтөйәк{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h2>{{ map.title }}</h2>
+      {% if map.description %}
+        <p class="text-muted">{{ map.description }}</p>
+      {% endif %}
+      <p>
+        <span class="badge bg-secondary">{{ map.toponyms.count }} точек</span>
+        {% if map.is_public %}
+          <span class="badge bg-success">Публичная</span>
+        {% else %}
+          <span class="badge bg-warning text-dark">Приватная</span>
+        {% endif %}
+      </p>
+    </div>
+    <a href="{% url 'toponyms:map' %}" class="btn btn-outline-secondary">← На главную</a>
+  </div>
+
+  <div id="map" style="width: 100%; height: 600px; border-radius: 8px;"></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  ymaps.ready(function () {
+    const map = new ymaps.Map('map', {
+      center: [54.7388, 55.9721],  // Уфа
+      zoom: 7,
+      controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl'],
+    });
+  });
+</script>
+{% endblock %}
