@@ -6,6 +6,6 @@ app_name = 'maps'
 
 urlpatterns = [
     path('create/', UserMapCreateView.as_view(), name='create'),
-    path('<int:pk>/', UserMapDetailView.as_view(), name='detail'),  # ← добавили
+    path('<slug:slug>/', UserMapDetailView.as_view(), name='detail'),
     path('', UserMapCreateView.as_view(), name='map_list'),
 ]

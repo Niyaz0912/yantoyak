@@ -31,3 +31,4 @@ Thumbs.db
 # Отладочные и временные файлы (конкретные, не по маске)
 pdf_debug.txt
 *.pdf
+PROJECT_AUDIT.md

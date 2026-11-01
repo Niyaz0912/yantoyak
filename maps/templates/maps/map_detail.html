@@ -1,5 +1,6 @@
 <!-- maps/templates/maps/map_detail.html -->
 {% extends 'base.html' %}
+{% load static %}  <!-- ← Добавили для подключения статики -->
 
 {% block title %}{{ map.title }} | Йәнтөйәк{% endblock %}
 
@@ -23,18 +24,15 @@
     <a href="{% url 'toponyms:map' %}" class="btn btn-outline-secondary">← На главную</a>
   </div>
 
+  <!-- Кнопка "Моё местоположение" -->
+  <button id="locate-btn" class="btn btn-primary mb-3">📍 Моё местоположение</button>
+
+  <!-- Контейнер для карты -->
   <div id="map" style="width: 100%; height: 600px; border-radius: 8px;"></div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-  ymaps.ready(function () {
-    const map = new ymaps.Map('map', {
-      center: [54.7388, 55.9721],  // Уфа
-      zoom: 7,
-      controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl'],
-    });
-  });
-</script>
+<!-- Подключаем наш JS файл -->
+<script src="{% static 'js/map_detail.js' %}"></script>
 {% endblock %}
